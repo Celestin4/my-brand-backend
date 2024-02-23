@@ -1,0 +1,32 @@
+{
+  "name": "my-brand-backend",
+  "version": "1.0.0",
+  "description": "This is backend part of my portfolio webssite at Andela. It was intended with proving a solid foundation in bakend using mongodb and express js.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "NTEZIRYAYO",
+    "Celestin",
+    "Fullstack",
+    "software",
+    "developer",
+    "Andela",
+    "Fullstack",
+    "programming"
+  ],
+  "author": "NTEZIRYAYO Celestin",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.0.3"
+  }
+}
