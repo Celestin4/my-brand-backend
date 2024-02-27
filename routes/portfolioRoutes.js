@@ -11,14 +11,15 @@ const {
   deletePortfolio,
 } = require("../controllers/portfolioControllers");
 
+const upload = require("../multer/config");
 
-router.post("/createPortfolio", createPortfolio);
+router.post("/createPortfolio", upload.upload.single("image"), createPortfolio);
 
 router.get("/getAllPortfolios", getPortfolios);
 
 router.get("/getSinglePortfolio/:id", getPortfolioById);
 
-router.put("/updatePortfolio/:id", updatePortfolio);
+router.put("/updatePortfolio/:id", upload.upload.single("updatedImage"), updatePortfolio);
 
 router.delete("/deletePortfolio/:id", deletePortfolio);
 

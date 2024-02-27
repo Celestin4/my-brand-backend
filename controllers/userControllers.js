@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 async function registerUser(req, res, next) {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, role } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: "User already exists" });
@@ -16,6 +16,7 @@ async function registerUser(req, res, next) {
       fullName,
       email,
       password: hashedPassword,
+      role: 'Guest',
     });
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
@@ -28,7 +29,8 @@ async function registerUser(req, res, next) {
     user : {
       _id: user._id,
       fullName: user.fullName,
-      email: user.email
+      email: user.email,
+      role: user.role
     },
     token });
   } catch (error) {

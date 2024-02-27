@@ -34,8 +34,13 @@ const getAllMessages = async (req, res) => {
   }
 };
 
+const replyMessage = async (req, res) => {
+
+}
+
 
 module.exports = {
     createMessage,
-    getAllMessages
+    getAllMessages,
+    replyMessage
 }
