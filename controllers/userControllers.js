@@ -3,12 +3,17 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
-async function registerUser(req, res, next) {
+async function registerUser(req, res) {
   try {
     const { fullName, email, password, role } = req.body;
+
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ message: "Please fill in all fields" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -16,47 +21,77 @@ async function registerUser(req, res, next) {
       fullName,
       email,
       password: hashedPassword,
-      role: 'Guest',
-    });
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      role: role || "Guest",
     });
 
-    
+    const additionalClaims = {
+      iat: Math.floor(Date.now() / 1000),
+      iss: "nteziryo.netlify.app",
+    };
 
-    res.status(201).json({ message: "User registered successfully", 
+    const token = jwt.sign(
+      { userId: user._id, email, role, ...additionalClaims },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
 
-    user : {
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role
-    },
-    token });
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
+      token,
+    });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 }
 
 async function loginUser(req, res) {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
+    }
 
-  if (!user) {
-    return res.status(400).json({ error: "User not found" });
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const additionalClaims = {
+      iat: Math.floor(Date.now() / 1000),
+      iss: "nteziryo.netlify.app",
+    };
+
+    const token = jwt.sign(
+      { userId: user._id, email, role: user.role, ...additionalClaims },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    res.status(200).json({ token, user });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
   }
-
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    return res.status(400).json({ error: "Invalid password" });
-  }
-
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
-  res.status(200).json({ token, user});
 }
+
 
 async function getAllUsers(req, res, next) {
   try {

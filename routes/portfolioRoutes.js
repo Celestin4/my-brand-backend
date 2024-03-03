@@ -10,17 +10,18 @@ const {
   updatePortfolio,
   deletePortfolio,
 } = require("../controllers/portfolioControllers");
+const {isAuthenticated, isAdmin} = require('../middleware/authMiddleware');
 
 const upload = require("../multer/config");
 
-router.post("/createPortfolio", upload.upload.single("image"), createPortfolio);
+router.post("/createPortfolio",isAuthenticated, isAdmin, upload.upload.single("image"), createPortfolio);
 
 router.get("/getAllPortfolios", getPortfolios);
 
 router.get("/getSinglePortfolio/:id", getPortfolioById);
 
-router.put("/updatePortfolio/:id", upload.upload.single("updatedImage"), updatePortfolio);
+router.put("/updatePortfolio/:id", isAuthenticated, isAdmin, upload.upload.single("updatedImage"), updatePortfolio);
 
-router.delete("/deletePortfolio/:id", deletePortfolio);
+router.delete("/deletePortfolio/:id", isAuthenticated, isAdmin, deletePortfolio);
 
 module.exports = router;

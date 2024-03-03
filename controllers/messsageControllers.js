@@ -28,6 +28,7 @@ const createMessage = async (req, res) => {
 
 // Controller for getting a list of all messages
 const getAllMessages = async (req, res) => {
+  const {user} = req;
   try {
     // Fetch all messages from the database
     const messages = await Message.find();

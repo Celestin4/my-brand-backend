@@ -9,7 +9,7 @@ exports.createPortfolio = async (req, res) => {
     await portfolio.save();
     res.status(201).json(portfolio);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: error.message, yes: "i am here in errors"});
   }
 };
 
