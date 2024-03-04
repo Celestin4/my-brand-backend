@@ -92,23 +92,33 @@ async function likeBlogPost(req, res) {
     const { userId, blogId } = req.body;
     const post = await BlogPost.findById(blogId);
     if (!post) {
-      return res.status(404).json({ success: false, message: "Blog post not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog post not found" });
     }
 
     // Check if the user has already liked the post
-    if (post.likes.includes(userId)) {
-      return res.status(400).json({ success: false, message: "User has already liked this post" });
+    const index = post.likes.indexOf(userId);
+    if (index !== -1) {
+      // If user already liked the post, remove the like
+      post.likes.splice(index, 1);
+      await post.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Blog post unliked successfully" });
+    } else {
+      // If user has not liked the post, add the like
+      post.likes.push(userId);
+      await post.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Blog post liked successfully" });
     }
-
-    post.likes.push(userId);
-    await post.save();
-
-    return res.status(200).json({ success: true, message: "Blog post liked successfully" });
   } catch (error) {
-    console.error("Error liking blog post:", error);
+    console.error("Error liking/unliking blog post:", error);
     return res.status(500).json({
       success: false,
-      message: "An error occurred while liking the blog post",
+      message: "An error occurred while liking/unliking the blog post",
     });
   }
 }
@@ -118,13 +128,17 @@ async function shareBlogPost(req, res) {
     const { blogId, userId } = req.body;
     const post = await BlogPost.findById(blogId);
     if (!post) {
-      return res.status(404).json({ success: false, message: "Blog post not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog post not found" });
     }
 
     post.shares.push(userId);
     await post.save();
 
-    return res.status(200).json({ success: true, message: "Blog post shared successfully" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Blog post shared successfully" });
   } catch (error) {
     console.error("Error sharing blog post:", error);
     return res.status(500).json({
@@ -139,13 +153,17 @@ async function updateViews(req, res) {
     const { blogId, userId } = req.body;
     const post = await BlogPost.findById(blogId);
     if (!post) {
-      return res.status(404).json({ success: false, message: "Blog post not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog post not found" });
     }
 
     post.views.push(userId);
     await post.save();
 
-    return res.status(200).json({ success: true, message: "Views updated successfully" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Views updated successfully" });
   } catch (error) {
     console.error("Error updating views:", error);
     return res.status(500).json({
@@ -169,13 +187,13 @@ const addCommentToPost = async (req, res) => {
     blogPost.comments.push(newComment);
     await blogPost.save();
 
-    res.status(201).json({ message: "Comment added to blog post", comment: newComment });
+    res
+      .status(201)
+      .json({ message: "Comment added to blog post", comment: newComment });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
-
 
 module.exports = {
   createPost,
@@ -186,5 +204,5 @@ module.exports = {
   likeBlogPost,
   shareBlogPost,
   updateViews,
-  addCommentToPost
+  addCommentToPost,
 };

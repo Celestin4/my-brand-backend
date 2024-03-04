@@ -1,11 +1,10 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 
 
-const app = express()
+const app = express();
 app.use(express.json());
 app.use(cors());
-app.use('/uploads', express.static('uploads'));
-
+app.use("/uploads", express.static("uploads"));
 
 module.exports = app;

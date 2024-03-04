@@ -1,3 +1,5 @@
+
+
 const express = require("express");
 const router = express.Router();
 const {
@@ -15,28 +17,24 @@ const { isAuthenticated, isAdmin } = require("../middleware/authMiddleware");
 
 const upload = require("../multer/config");
 
+
+router.get("/", getAllPosts);
+router.get("/:blogPostId", getSinglePost);
 router.post(
-  "/createBlogPost",
+  "/",
   isAuthenticated,
   isAdmin,
   upload.upload.single("blogImage"),
   createPost
 );
-router.delete(
-  "/deleteBlogPost/:blogPostId",
-  isAuthenticated,
-  isAdmin,
-  deletePost
-);
 router.put(
-  "/updateBlogPost/:blogPostId",
+  "/:blogPostId",
   isAuthenticated,
   isAdmin,
   upload.upload.single("updatedBlogImage"),
   updatePost
 );
-router.get("/getAllPosts", getAllPosts);
-router.get("/getSinglePost/:blogPostId", getSinglePost);
+router.delete("/:blogPostId", isAuthenticated, isAdmin, deletePost);
 router.post("/like", isAuthenticated, likeBlogPost);
 router.post("/share", isAuthenticated, shareBlogPost);
 router.post("/view", updateViews);

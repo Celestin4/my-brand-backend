@@ -7,8 +7,16 @@ async function registerUser(req, res) {
   try {
     const { fullName, email, password, role } = req.body;
 
-    if (!fullName || !email || !password) {
-      return res.status(400).json({ message: "Please fill in all fields" });
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    if (!validateName(fullName)) {
+      return res.status(400).json({ message: "Invalid name format" });
+    }
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({ message: "Password must contain at least one number and be 6-12 characters long with special characters" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -30,28 +38,33 @@ async function registerUser(req, res) {
     };
 
     const token = jwt.sign(
-      { userId: user._id, email, role, ...additionalClaims },
+      { userId: user._id, email, role: user.role, ...additionalClaims },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
       }
     );
 
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        _id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-      },
-      token,
-    });
+    res.status(201).json({ token });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 }
 
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function validateName(name) {
+  const nameRegex = /^[a-zA-Z ]+$/;
+  return nameRegex.test(name);
+}
+
+function validatePassword(password) {
+  const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{6,12}$/;
+  return passwordRegex.test(password);
+}
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
@@ -86,16 +99,15 @@ async function loginUser(req, res) {
       }
     );
 
-    res.status(200).json({ token, user });
+    res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 }
 
-
 async function getAllUsers(req, res, next) {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-password");
     res.json(users);
   } catch (error) {
     next(error);
@@ -108,7 +120,7 @@ async function getSingleUser(req, res, next) {
 
     const user = await User.findOne({ email: userEmail });
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.json(user);
@@ -122,17 +134,17 @@ async function deleteUser(req, res, next) {
     const userId = req.params.userId;
 
     if (!mongoose.isValidObjectId(userId)) {
-      return res.status(400).json({ error: "Invalid user ID format" });
+      return res.status(400).json({ message: "Invalid user ID format" });
     }
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     await user.deleteOne();
 
-    res.json({ message: "User deleted successfully", user });
+    res.json({ message: "User deleted successfully" });
   } catch (error) {
     next(error);
   }
@@ -145,3 +157,4 @@ module.exports = {
   deleteUser,
   getSingleUser,
 };
+
