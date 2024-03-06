@@ -1,3 +1,9 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Blogs
+ *   description: Blog management
+ */
 
 
 const express = require("express");
@@ -19,6 +25,7 @@ const upload = require("../multer/config");
 
 
 router.get("/", getAllPosts);
+
 router.get("/:blogPostId", getSinglePost);
 router.post(
   "/",

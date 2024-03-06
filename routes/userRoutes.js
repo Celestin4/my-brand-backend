@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Blogs
+ *   description: Blog management
+ */
+
 const express = require('express');
 const router = express.Router();
 const {registerUser, loginUser, getAllUsers, deleteUser, getSingleUser} = require('../controllers/userControllers');
