@@ -1,35 +1,4 @@
-/**
- * @swagger
- * /posts:
- *   post:
- *     summary: Create a new blog post
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               headlineText:
- *                 type: string
- *               content:
- *                 type: string
- *               author:
- *                 type: string
- *               file:
- *                 type: string
- *     responses:
- *       '200':
- *         description: Blog post created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/BlogPost'
- *       '500':
- *         description: Internal server error
- */
+
 const BlogPost = require("../models/blogsModel");
 const upload = require("../multer/config");
 
@@ -101,7 +70,7 @@ const updatePost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
     const allBlogPosts = await BlogPost.find();
-    res.json(allBlogPosts);
+    res.status(201).json(allBlogPosts);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

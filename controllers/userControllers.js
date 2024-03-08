@@ -65,14 +65,15 @@ function validatePassword(password) {
   const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{6,12}$/;
   return passwordRegex.test(password);
 }
+
+
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
       return res
-        .status(400)
-        .json({ message: "Email and password are required" });
+        .status(400).json({ message: "Email and password are required" });
     }
 
     const user = await User.findOne({ email });
@@ -99,7 +100,7 @@ async function loginUser(req, res) {
       }
     );
 
-    res.status(200).json({ token });
+    res.status(201).json({ token });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -110,7 +111,7 @@ async function getAllUsers(req, res, next) {
     const users = await User.find().select("-password");
     res.json(users);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 }
 
@@ -146,9 +147,43 @@ async function deleteUser(req, res, next) {
 
     res.json({ message: "User deleted successfully" });
   } catch (error) {
-    next(error);
+   res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+async function updateUser(req, res) {
+  const { userId } = req.params; 
+  const { fullName, password, role, email } = req.body;
+
+  try {
+    const existingUser = await User.findById(userId);
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (email && email !== existingUser.email) {
+      return res.status(400).json({ message: "Cannot change email" });
+    }
+
+    if (fullName) {
+      existingUser.fullName = fullName;
+    }
+    if (password) {
+      existingUser.password = password;
+    }
+    if (role) {
+      existingUser.role = role;
+    }
+
+    await existingUser.save();
+    
+    res.json({message: "User updated successfully"});
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 
 module.exports = {
   registerUser,
@@ -156,5 +191,6 @@ module.exports = {
   getAllUsers,
   deleteUser,
   getSingleUser,
+  updateUser
 };
 

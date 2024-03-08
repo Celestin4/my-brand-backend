@@ -4,9 +4,9 @@
   "description": "This is backend part of my portfolio webssite at Andela. It was intended with proving a solid foundation in bakend using mongodb and express js.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "test": "jest"
   },
   "keywords": [
     "NTEZIRYAYO",

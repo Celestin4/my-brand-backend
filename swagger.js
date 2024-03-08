@@ -1,44 +1,34 @@
-const express = require("express");
 const swaggerJsdoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
+const path = require("path");
 
 const options = {
-  definition: {
+  swaggerDefinition: {
     openapi: "3.0.0",
     info: {
-      title: "MY Brand",
+      title: "MY BRAND - NTEZIRYAYO CELESTIN",
+      version: "1.0.0",
+      description: "API documentation for MY BRAND",
     },
+    servers: [
+      {
+        url: "http://localhost:3000",
+        description: "Development server",
+      },
+    ],
     components: {
       securitySchemes: {
-        bearerAuth: {
+        BearerAuth: {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
         },
       },
     },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
+    security: [{ BearerAuth: [] }],
   },
-  apis: ["./controllers/blogsControllers.js"],
+  apis: [path.resolve(__dirname, "./routes/*.js")],
 };
 
-const swaggerSpec = swaggerJsdoc(options);
-
-function swaggerDocs(app, port) {
-  // Swagger page
-  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-  // Docs in JSON format
-  app.get("/docs.json", (req, res) => {
-    res.setHeader("Content-Type", "application/json");
-    res.send(swaggerSpec);
-  });
-
-  console.info(`Docs available at http://localhost:${port}/docs`);
-}
+const swaggerDocs = swaggerJsdoc(options);
 
 module.exports = swaggerDocs;

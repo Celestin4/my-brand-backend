@@ -9,7 +9,7 @@ const subscriptionRoutes = require("./subscriptionRoutes");
 
 router.use("/users", userRoutes);
 router.use("/blogs", blogRoutes);
-router.use("/portfolios", portfolioRoutes);
+router.use("/portfolio", portfolioRoutes);
 router.use("/messages", messageRoutes);
 router.use("/subscribe", subscriptionRoutes);
 router.use("/subscribe", subscriptionRoutes);
