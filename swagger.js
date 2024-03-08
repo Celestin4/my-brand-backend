@@ -1,6 +1,8 @@
 const swaggerJsdoc = require("swagger-jsdoc");
 const path = require("path");
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const options = {
   swaggerDefinition: {
     openapi: "3.0.0",
@@ -11,8 +13,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
-        description: "Development server",
+        url: isProduction ? "https://my-brand-backend-8mqk.onrender.com" : "http://localhost:3000",
       },
     ],
     components: {
