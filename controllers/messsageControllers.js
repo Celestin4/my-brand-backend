@@ -25,7 +25,6 @@ const createMessage = async (req, res) => {
 };
 
 const getAllMessages = async (req, res) => {
-  const {user} = req;
   try {
     const messages = await Message.find();
 

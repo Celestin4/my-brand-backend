@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.97% </span>
+                <span class="strong">36.58% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>34/81</span>
+                <span class='fraction'>30/82</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.88% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/36</span>
+                <span class='fraction'>12/36</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.97% </span>
+                <span class="strong">36.58% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>34/81</span>
+                <span class='fraction'>30/82</span>
             </div>
         
             
@@ -259,7 +259,8 @@
 <a name='L194'></a><a href='#L194'>194</a>
 <a name='L195'></a><a href='#L195'>195</a>
 <a name='L196'></a><a href='#L196'>196</a>
-<a name='L197'></a><a href='#L197'>197</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -331,6 +332,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -340,20 +342,20 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -361,7 +363,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -527,6 +529,7 @@ function validatePassword(password) {
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
+    console.log(req.body);
 &nbsp;
     if (!email || !password) {
       return res
@@ -535,21 +538,21 @@ async function loginUser(req, res) {
 &nbsp;
     const user = await User.findOne({ email });
 &nbsp;
-    if (!user) {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 &nbsp;
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!isPasswordValid) {
+    const isPasswordValid = <span class="cstat-no" title="statement not covered" >await bcrypt.compare(password, user.password);</span>
+<span class="cstat-no" title="statement not covered" >    if (!isPasswordValid) {</span>
 <span class="cstat-no" title="statement not covered" >      return res.status(400).json({ message: "Invalid credentials" });</span>
     }
 &nbsp;
-    const additionalClaims = {
+    const additionalClaims = <span class="cstat-no" title="statement not covered" >{</span>
       iat: Math.floor(Date.now() / 1000),
       iss: "nteziryo.netlify.app",
     };
 &nbsp;
-    const token = jwt.sign(
+    const token = <span class="cstat-no" title="statement not covered" >jwt.sign(</span>
       { userId: user._id, email, role: user.role, ...additionalClaims },
       process.env.JWT_SECRET,
       {
@@ -557,7 +560,7 @@ async function loginUser(req, res) {
       }
     );
 &nbsp;
-    res.status(201).json({ token });
+<span class="cstat-no" title="statement not covered" >    res.status(201).json({ token });</span>
   } catch (error) {
 <span class="cstat-no" title="statement not covered" >    res.status(500).json({ message: "Internal server error" });</span>
   }
@@ -658,7 +661,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-08T15:15:13.637Z
+                at 2024-03-08T16:29:34.727Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

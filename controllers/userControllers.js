@@ -16,7 +16,10 @@ async function registerUser(req, res) {
     }
 
     if (!validatePassword(password)) {
-      return res.status(400).json({ message: "Password must contain at least one number and be 6-12 characters long with special characters" });
+      return res.status(400).json({
+        message:
+          "Password must contain at least one number and be 6-12 characters long with special characters",
+      });
     }
 
     const existingUser = await User.findOne({ email });
@@ -66,24 +69,28 @@ function validatePassword(password) {
   return passwordRegex.test(password);
 }
 
-
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
+    console.log(req.body);
 
     if (!email || !password) {
+      console.log("Missing email or password");
       return res
-        .status(400).json({ message: "Email and password are required" });
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     const user = await User.findOne({ email });
 
     if (!user) {
+      console.log("Invalid credentials");
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      console.log("Invalid credentials");
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
@@ -93,7 +100,13 @@ async function loginUser(req, res) {
     };
 
     const token = jwt.sign(
-      { userId: user._id, email, role: user.role, ...additionalClaims },
+      {
+        userId: user._id,
+        email,
+        fullName: user.fullName,
+        role: user.role,
+        ...additionalClaims,
+      },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
@@ -101,8 +114,12 @@ async function loginUser(req, res) {
     );
 
     res.status(201).json({ token });
+    console.log("Successfully signed in");
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
+    console.log("Server error");
+    console.log(error);
+    c;
   }
 }
 
@@ -147,12 +164,12 @@ async function deleteUser(req, res, next) {
 
     res.json({ message: "User deleted successfully" });
   } catch (error) {
-   res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
 async function updateUser(req, res) {
-  const { userId } = req.params; 
+  const { userId } = req.params;
   const { fullName, password, role, email } = req.body;
 
   try {
@@ -176,14 +193,13 @@ async function updateUser(req, res) {
     }
 
     await existingUser.save();
-    
-    res.json({message: "User updated successfully"});
+
+    res.json({ message: "User updated successfully" });
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
-
 
 module.exports = {
   registerUser,
@@ -191,6 +207,5 @@ module.exports = {
   getAllUsers,
   deleteUser,
   getSingleUser,
-  updateUser
+  updateUser,
 };
-

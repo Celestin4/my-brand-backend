@@ -1,10 +1,10 @@
-
 const BlogPost = require("../models/blogsModel");
 const upload = require("../multer/config");
 
 const createPost = async (req, res) => {
   try {
     const { title, headlineText, content } = req.body;
+    console.log(req.body);
     const blogImage = req.file.filename;
     const author = req.body.author || "Admin";
     const blogPost = await BlogPost.create({
@@ -21,6 +21,8 @@ const createPost = async (req, res) => {
     });
     res.json(blogPost);
   } catch (error) {
+    console.log(req.body);
+
     res.status(500).json({ error: error.message });
   }
 };
@@ -88,6 +90,7 @@ const getSinglePost = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 async function likeBlogPost(req, res) {
   try {
     const { userId, blogId } = req.body;
